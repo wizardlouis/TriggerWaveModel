@@ -1,0 +1,27 @@
+文档说明：
+1.model.py
+该文件用于保存静态G2-M模型的框架以及默认参数，以及一些函数用于搜索双稳态及正反波边界，求解思路如下：
+
+一、静态情况下，在任意给定初始条件下，求解双稳态边界以及波速相变边界，和三相点的位置：
+function:static(P),return: lower bound(N,ATP,ADP),higher bound(N,ATP,ADP),phase change bound(N,ATP,ADP),triple point (N,ATP,ADP)
+并保存给定的初始条件（各种参数）
+采用策略：二分递进演化
+具体描述：1.首先了解到双稳态区域在ADP=0时ATP的边界最大，在三相点处三个bound交汇，因此在给定ATP和ADP变化范围的情况下，从最小的ADP开始，搜索ATP的中值。
+不存在双稳态-存在双稳态确定lower bound，存在双稳态-不存在双稳态确定higher bound，用这种方式来确定双稳态的边界。
+当确定双稳态的边界以后，使ATP的变化范围固定为当前的值，在其中继续做二分，每次取势差积分反号的区间，逐渐缩减区间直到找到小于tolerance误差的位置。
+
+2.tube.py
+该文件用于一维管的模拟，定义了一维管类以及LabeledTensor,LabeledTensor用于表示管内的物质浓度，对特定的轴设定了名称方便之后模拟中检索，也方便将数据检索和写微分方程两个过程分开来。
+RD_simulator是一个一维管的reaction-diffusion过程的模拟器，只要定义的管的参数以及管中的物质名称就可以生成一个模拟器，同时能够比较方便地重载管内各物质的反应动力学方程。
+
+3.RD_param.py
+对tube.py中设定的反应方程有改动的参数和方程放在这个文件中，模拟多个不同系统可以自己加动力学函数，由于在labeledTensor中定义好了对应物质名称寻址的函数，因此动力学方程可以直接用名称检索
+
+4.fig_analysis.py
+对保存在Analysis_fig_YP//fig_YP文件夹中的图片进行分析的文件，分析结果默认保存在Analysis_fig_YP//results中
+
+5.utils.py
+一些方便保存、读取的函数，不习惯用的可以直接忽略
+
+6.作图用的脚本
+正文作图的脚本，fig1b,fig1d等。。。
